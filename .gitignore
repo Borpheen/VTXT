@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.pyc
+*.pyo
+*.log
+
+.venv/
+venv/
+
+build/
+dist/
+Installer/
+Releases/
+
+*.tmp
+*.bak
