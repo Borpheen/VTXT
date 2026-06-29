@@ -1,5 +1,5 @@
 """
-VTXT v3.0.0 — Final PySide6 build candidate
+VTXT v3.0.1 — focus-steal fix (overlay no longer activates on show)
 Current state:
 - Dual independent countdown timers with accurate elapsed-time countdowns
 - Timer-finished alarm playback with built-in WAV tones and custom media files
@@ -51,7 +51,7 @@ TEXT_WARN   = "#f85149"
 SEG_ON      = "#b0b4b4"   # brighter seg fill
 SEG_WARN    = "#f85149"
 SEG_OFF     = "#222525"   # slightly lighter off so it reads
-VERSION     = "v3.0.0"
+VERSION     = "v3.0.1"
 APP_NAME    = "VTXT"
 APPDATA_DIR = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), APP_NAME)
 SETTINGS_FILE = os.path.join(APPDATA_DIR, "settings.json")
@@ -2117,6 +2117,11 @@ class OverlayPill(QWidget):
             Qt.Tool
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
+        # Never grab keyboard/window focus when shown. Without this, show()
+        # activates the overlay and steals foreground, which minimizes a
+        # fullscreen game (and knocks borderless out of focus) on any PC whose
+        # ForegroundLockTimeout has been zeroed by a "gaming tweak" tool.
+        self.setAttribute(Qt.WA_ShowWithoutActivating, True)
         self._locked = False
         self._bg_alpha = 150
         self._drag_pos = None
@@ -2155,11 +2160,12 @@ class OverlayPill(QWidget):
         c2 = TEXT_WARN if t2_warn else (TEXT_PRI if t2_running else TEXT_DIM)
         self._t1.setStyleSheet(f"color:{c1};background:transparent;")
         self._t2.setStyleSheet(f"color:{c2};background:transparent;")
-        # Show only when a timer is running AND user hasn't hidden it
-        if (t1_running or t2_running) and not user_hidden:
-            self.show()
-        else:
-            self.hide()
+        # Show only when a timer is running AND user hasn't hidden it.
+        # Only touch visibility on an actual transition so we aren't calling a
+        # window op several times a second when nothing changed.
+        should_show = (t1_running or t2_running) and not user_hidden
+        if should_show != self.isVisible():
+            self.setVisible(should_show)
         self.update()
 
     def paintEvent(self, e):

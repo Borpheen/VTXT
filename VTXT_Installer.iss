@@ -1,5 +1,5 @@
 #define MyAppName "VTXT"
-#define MyAppVersion "3.0.0"
+#define MyAppVersion "3.0.1"
 #define MyAppPublisher "VTX-LordBust"
 #define MyAppExeName "VTXT.exe"
 
@@ -12,7 +12,7 @@ DefaultDirName={autopf}\VTXT
 DefaultGroupName=Vertex
 DisableProgramGroupPage=yes
 OutputDir=E:\vtx\Vertex timer\vertex_timer_v3.0\Installer
-OutputBaseFilename=VTXT_Setup_v3.0.0
+OutputBaseFilename=VTXT_Setup_v3.0.1
 SetupIconFile=E:\vtx\Vertex timer\vertex_timer_v3.0\Packaged\vtxt.ico
 Compression=lzma
 SolidCompression=yes
